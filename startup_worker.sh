@@ -16,4 +16,4 @@ sudo systemctl restart sshd
 
 sudo sed -i 's/enforcing/disabled/g' /etc/sysconfig/selinux
 sudo sed -i 's/enforcing/disabled/g' /etc/selinux/config
-reboot
+#reboot
