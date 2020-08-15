@@ -1,4 +1,4 @@
-# !/bin/bash
+# !/bin/bash  aruntony
 sudo mkdir /root/.ssh
 sudo echo $1 > /root/.ssh/id_rsa
 sudo sed -i 's/\\n/\n/g' /root/.ssh/id_rsa
