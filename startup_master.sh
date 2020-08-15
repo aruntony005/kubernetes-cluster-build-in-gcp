@@ -52,6 +52,7 @@ sudo kubeadm init > /root/kubeinit
 sudo mkdir /root/.kube
 sudo cat /etc/kubernetes/admin.conf > /root/.kube/config
 
-sudo cat kubeinit | grep -E 'kubeadm join|--discovery' >> /root/kubeinit.sh
+sudo cat /root/kubeinit | grep -E 'kubeadm join|--discovery' >> /root/kubeinit.sh
 sudo chmod 755 /root/kubeinit.sh
 sudo ssh worker < /root/kubeinit.sh
+sudo kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')"
