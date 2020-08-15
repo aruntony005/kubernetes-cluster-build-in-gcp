@@ -15,3 +15,6 @@ sudo sed -i "$i"d /etc/ssh/sshd_config
 sudo echo -e "PermitRootLogin yes\nPubkeyAuthentication yes\nPasswordAuthentication yes" >> /etc/ssh/sshd_config
 
 sudo systemctl restart sshd
+sudo sed -i 's/enforcing/disabled/g' /etc/sysconfig/selinux
+sudo sed -i 's/enforcing/disabled/g' /etc/selinux/config
+reboot
