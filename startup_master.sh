@@ -49,8 +49,8 @@ sudo swapoff -a &&  sed -i '/ swap / s/^/#/' /etc/fstab
 sudo yum install bind-utils -y
 
 sudo kubeadm init > /root/kubeinit
-sudo mkdir .kube
-sudo cat /etc/kubernetes/admin.conf > .kube/config
+sudo mkdir /root/.kube
+sudo cat /etc/kubernetes/admin.conf > /root/.kube/config
 
 sudo cat kubeinit | grep -E 'kubeadm join|--discovery' >> /root/kubeinit.sh
 sudo chmod 755 /root/kubeinit.sh
