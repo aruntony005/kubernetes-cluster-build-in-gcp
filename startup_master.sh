@@ -1,8 +1,10 @@
-# !/bin/bash  aruntony
+# !/bin/bash
 sudo mkdir /root/.ssh
-sudo echo $1 > /root/.ssh/id_rsa
-sudo sed -i 's/\\n/\n/g' /root/.ssh/id_rsa
-sudo echo $2 > /root/.ssh/authorized_keys
+sudo cat /root/startup/private_key > /root/.ssh/id_rsa
+sudo cat /root/startup/public_key >> /root/.ssh/authorized_keys
+sudo chmod 700 /root/.ssh
+sudo chmod 600 /root/.ssh/id_rsa
+sudo chmod 644 /root/.ssh/authorized_keys
 i=`cat /etc/ssh/sshd_config | grep -n PermitRootLogin\ no | awk -F: '{print $1}'`
 sudo sed -i "$i"d /etc/ssh/sshd_config
 i=`cat /etc/ssh/sshd_config | grep -n \#PubkeyAuthentication\ yes | awk -F: '{print $1}'`
