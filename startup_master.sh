@@ -51,3 +51,7 @@ sudo yum install bind-utils -y
 sudo kubeadm init > /root/kubeinit
 sudo mkdir .kube
 sudo cat /etc/kubernetes/admin.conf > .kube/config
+
+sudo cat kubeinit | grep -E 'kubeadm join|--discovery' >> /root/kubeinit.sh
+sudo chmod 755 /root/kubeinit.sh
+sudo ssh worker < /root/kubeinit.sh
