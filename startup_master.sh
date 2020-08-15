@@ -17,4 +17,4 @@ sudo echo -e "PermitRootLogin yes\nPubkeyAuthentication yes\nPasswordAuthenticat
 sudo systemctl restart sshd
 sudo sed -i 's/enforcing/disabled/g' /etc/sysconfig/selinux
 sudo sed -i 's/enforcing/disabled/g' /etc/selinux/config
-sudo reboot
+sudo setenforce 0
