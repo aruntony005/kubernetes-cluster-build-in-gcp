@@ -18,3 +18,36 @@ sudo systemctl restart sshd
 sudo sed -i 's/enforcing/disabled/g' /etc/sysconfig/selinux
 sudo sed -i 's/enforcing/disabled/g' /etc/selinux/config
 sudo setenforce 0
+
+### kubernetes installation ###
+
+sudo systemctl stop firewalld
+sudo systemctl disable firewalld
+
+sudo cat <<EOF > /etc/yum.repos.d/kubernetes.repo
+[kubernetes]
+name=Kubernetes
+baseurl=http://yum.kubernetes.io/repos/kubernetes-el7-x86_64
+enabled=1
+gpgcheck=1
+repo_gpgcheck=1
+gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg
+        https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+EOF
+
+
+sudo yum clean all
+sudo yum install -y docker kubelet kubeadm kubectl kubernetes-cni
+sudo systemctl start docker
+sudo systemctl enable docker
+sudo systemctl start kubelet
+sudo systemctl enable kubelet
+
+sudo sysctl -w net.bridge.bridge-nf-call-iptables=1
+sudo echo "net.bridge.bridge-nf-call-iptables=1" > /etc/sysctl.d/k8s.conf
+sudo swapoff -a &&  sed -i '/ swap / s/^/#/' /etc/fstab
+sudo yum install bind-utils -y
+
+sudo kubeadm init > /root/kubeinit
+sudo mkdir .kube
+sudo cat /etc/kubernetes/admin.conf > .kube/config
