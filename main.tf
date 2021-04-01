@@ -5,51 +5,84 @@ provider "google" {
 }
 
 
-resource "google_compute_instance" "master_vm_instance" {
- name         = "master"
- machine_type = "n1-standard-4"
- zone         = "us-west1-a"
 
- tags = ["cm"]
+resource "google_compute_instance_template" "master" {
+  name        = "master-template"
 
- boot_disk {
-   initialize_params {
-     image = "centos-cloud/centos-7"
-     type = "pd-standard"
-     size = "20"
-   }
- }
+  tags = ["master"]
 
- metadata_startup_script = "sudo sed -i 's #baseurl =/baseurl=/g' /etc/yum.repos.d/CentOS-Base.repo;sudo mkdir /root/startup/;sudo yum install git -y ;sudo git clone https://github.com/aruntony005/kubernetes-cluster-build.git /root/startup/; chmod -R 755 /root/startup; sh /root/startup/startup_master.sh"
+  labels = {
+    role = "master"
+  }
 
- network_interface {
-   network = "default"
-   access_config {
+  machine_type         = "n1-standard-2"
 
- }
+  disk {
+    source_image      = "centos-cloud/centos-8"
+    auto_delete       = false
+    boot              = true
+  }
+
+  network_interface {
+    network = "default"
+  }
+
+  metadata = {
+    role = "master"
+  }
+
 }
+
+
+
+resource "google_compute_instance_template" "worker" {
+  name        = "worker-template"
+  
+  tags = ["worker"]
+
+  labels = {
+    role = "worker"
+  }
+
+  machine_type         = "n1-standard-2"
+
+  disk {
+    source_image      = "centos-cloud/centos-8"
+    auto_delete       = false
+    boot              = true
+  }
+
+  network_interface {
+    network = "default"
+  }
+
+  metadata = {
+    role = "worker"
+  }
+
 }
 
-resource "google_compute_instance" "worker_vm_instance" {
- name         = "worker"
- machine_type = "n1-standard-2"
- zone         = "us-west1-a"
 
- tags = ["cm"]
+resource "google_compute_instance_group_manager" "appserver" {
+  name = "kube-cluster"
+  base_instance_name = "kube"
+  zone               = "us-central1-a"
+//  wait_for_instances = "true"
 
- boot_disk {
-   initialize_params {
-     image = "centos-cloud/centos-7"
-     type = "pd-standard"
-     size = "20"
-   }
- }
- metadata_startup_script = "sudo sed -i 's #baseurl =/baseurl=/g' /etc/yum.repos.d/CentOS-Base.repo;sudo mkdir /root/startup/;sudo yum install git -y ;sudo git clone https://github.com/aruntony005/kubernetes-cluster-build.git /root/startup/; chmod -R 755 /root/startup; sh /root/startup/startup_worker.sh"
- 
- network_interface {
-   network = "default"
-   access_config {
+  version {
+    name = "worker"
+    instance_template  = google_compute_instance_template.worker.id
+  }
 
- }
+  version {
+    name = "master"
+    instance_template  = google_compute_instance_template.master.id
+    target_size {
+      fixed = 1
+    }
+  }
+
+  target_size  = 2
 }
-}
+
+
