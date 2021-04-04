@@ -1,0 +1,8 @@
+- name: kubernetes cluster build
+  hosts: sample
+  gather_facts: yes
+  become: yes
+#  vars: 
+
+  roles:
+  - cluster_installation

@@ -1,0 +1,123 @@
+---
+- block:
+  - name: Edit sshd_config (remove the lines with certain keywords)
+    lineinfile:
+       path: /etc/ssh/sshd_config
+       regexp: "{{ item }}"
+       state: absent
+    become: yes
+    with_items:
+      - PermitRootLogin
+      - PubkeyAuthentication
+      - PasswordAuthentication
+
+  - name: Add some lines to sshd_config
+    lineinfile:
+       path: /etc/ssh/sshd_config
+       insertafter: EOF
+       line: "{{ item }}"
+    with_items:
+      - PermitRootLogin yes
+      - PubkeyAuthentication yes
+      - PasswordAuthentication yes
+    become: yes
+
+  - name: Restart sshd service
+    systemd:
+     name: sshd
+     state: restarted
+    become: yes
+
+  - name: Disable selinux
+    selinux:
+     state: disabled
+    become: yes
+
+  - name: Stop and disable firewall
+    service:
+     name: firewalld
+     enabled: no
+     state: "{{ item }}"
+    with_items:
+     - stopped
+    become: yes
+
+  - name: Add kubernetes repo
+    yum_repository:
+     name: kubernetes
+     description: kubernetes installation
+     baseurl: http://yum.kubernetes.io/repos/kubernetes-el7-x86_64
+     enabled: yes
+     gpgcheck: yes
+     gpgkey: ['https://packages.cloud.google.com/yum/doc/yum-key.gpg', 'https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg']
+    notify: yum-clean
+
+  - name: Install yum-utils
+    yum:
+     name: yum-utils
+     state: present
+
+  - name: Add docker repo
+    shell: yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+
+  - name: yum-clean
+    command: yum clean all
+    args:
+      warn: no
+
+  - name: Install dependency packages
+    yum:
+     name: "{{ item }}"
+     state: present
+    with_items:
+     - httpd
+     - docker-ce.x86_64
+     - kubernetes-cni-0.8.7-0.x86_64
+     - kubelet-1.20.5-0.x86_64
+     - kubeadm-1.20.5-0
+     - kubectl-1.20.5-0
+     - bind-utils
+
+  - name: Start services
+    systemd:
+     name: "{{ item }}"
+     state: started
+     enabled: yes
+    with_items:
+     - httpd
+     - docker
+     - kubelet
+    become: yes
+
+  - name: Enable net.bridge.bridge-nf-call-iptables
+    sysctl:
+     name: net.bridge.bridge-nf-call-iptables
+     value: 1
+     state: present
+     reload: yes
+
+  - name: Add sysctl conf
+    lineinfile:
+     path: /etc/sysctl.d/k8s.conf
+     insertafter: EOF
+     line: net.bridge.bridge-nf-call-iptables=1
+     create: yes
+
+  - name: Swap off
+    shell: swapoff -a && sed -i '/ swap / s/^/#/' /etc/fstab
+
+  - name: Initialize kubeadm
+    shell: kubeadm init
+    register: kubeinit
+
+
+  - name: Add kubeadm join
+    blockinfile:
+     path: /root/kube-init
+     create: yes
+     block: |
+       {{ kubeinit }}
+
+
+
+

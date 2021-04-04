@@ -25,10 +25,13 @@ resource "google_compute_instance_template" "master" {
 
   network_interface {
     network = "default"
+    access_config {
+    }
   }
 
   metadata = {
-    role = "master"
+    role = "master",
+    mig_name = "kube-cluster-mig"
   }
 
 }
@@ -54,17 +57,20 @@ resource "google_compute_instance_template" "worker" {
 
   network_interface {
     network = "default"
+    access_config {
+    }
   }
 
   metadata = {
-    role = "worker"
+    role = "worker",
+    mig_name = "kube-cluster-mig"
   }
 
 }
 
 
 resource "google_compute_instance_group_manager" "appserver" {
-  name = "kube-cluster"
+  name = "kube-cluster-mig"
   base_instance_name = "kube"
   zone               = "us-central1-a"
 //  wait_for_instances = "true"
@@ -84,5 +90,3 @@ resource "google_compute_instance_group_manager" "appserver" {
 
   target_size  = 2
 }
-
-
