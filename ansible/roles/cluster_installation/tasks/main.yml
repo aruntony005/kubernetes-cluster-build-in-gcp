@@ -1,5 +1,17 @@
 ---
 - block:
+  - name: Get the metadata role
+    uri:
+     url: http://metadata.google.internal/computeMetadata/v1/instance/attributes/role
+     return_content: yes
+     headers:
+       Metadata-Flavor: Google
+    register: kuberole
+
+   - name: sample
+     set_fact:
+      host: "{{ groups }}"
+
   - name: Edit sshd_config (remove the lines with certain keywords)
     lineinfile:
        path: /etc/ssh/sshd_config
@@ -111,26 +123,55 @@
   - name: Swap off
     shell: swapoff -a && sed -i '/ swap / s/^/#/' /etc/fstab
 
-#  - name: Initialize kubeadm
-#    shell: kubeadm init
-#    register: kubeinit
+  - name: Initialize kubeadm
+    shell: kubeadm init
+    register: kubeinit
+    when: (kuberole.content == "master")
 
-
-#  - name: Add kubeadm join
-#    blockinfile:
-#     path: /root/kube-init
-#     create: yes
-#     block: |
-#       {{ kubeinit.stdout }}
+  - name: Add kubeadm join
+    blockinfile:
+     path: /root/kube-init
+     create: yes
+     block: |
+       {{ kubeinit.stdout }}
+    when: (kuberole.content == "master")
 
   - name: Create kube join command
     shell: cat /root/kube-init | grep -E 'kubeadm join|--discovery' > /root/kubeinit.sh && chmod 755 /root/kubeinit.sh
+    when: (kuberole.content == "master")
 
   - name: Create .kube directory
     file:
      path: /root/.kube
      state: directory
+    when: (kuberole.content == "master")
 
   - name: Create kube config
     shell: cat /etc/kubernetes/admin.conf > /root/.kube/config
+    when: (kuberole.content == "master")
 
+  - name: Webserver setup
+    shell: sed -i 's/listen\ 80/Listen\ 8080/g' /etc/httpd/conf/httpd.conf && echo 'worker' >> /var/www/html/health && chmod 777 /var/www/html/health
+    when: (kuberole.content == "worker")
+
+  - name: Start services
+    systemd:
+     name: httpd
+     state: restarted
+     enabled: yes
+    when: (kuberole.content == "worker")
+
+  - name: Wait for 8080 port to be up in the worker nodes
+    wait_for:
+      host: 10.128.15.212
+      port: 8080
+      state: started
+    when: (kuberole.content == "master")
+
+  - name: kube join
+    shell: ssh -o StrictHostKeyChecking=no 10.128.15.212 < /root/kubeinit.sh
+    when: (kuberole.content == "master")
+
+  - name: Add cni objects
+    shell: kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')"
+    when: (kuberole.content == "master")

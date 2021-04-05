@@ -1,5 +1,5 @@
 - name: kubernetes cluster build
-  hosts: sample
+  hosts: kubecluster
   gather_facts: yes
   become: yes
 #  vars: 
