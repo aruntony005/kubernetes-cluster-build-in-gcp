@@ -42,6 +42,11 @@
      - stopped
     become: yes
 
+  - name: yum-clean
+    command: yum clean all
+    args:
+      warn: no
+
   - name: Add kubernetes repo
     yum_repository:
      name: kubernetes
@@ -50,7 +55,7 @@
      enabled: yes
      gpgcheck: yes
      gpgkey: ['https://packages.cloud.google.com/yum/doc/yum-key.gpg', 'https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg']
-    notify: yum-clean
+#    notify: yum-clean
 
   - name: Install yum-utils
     yum:
@@ -60,7 +65,7 @@
   - name: Add docker repo
     shell: yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
 
-  - name: yum-clean
+  - name: yum-clean1
     command: yum clean all
     args:
       warn: no
@@ -106,18 +111,26 @@
   - name: Swap off
     shell: swapoff -a && sed -i '/ swap / s/^/#/' /etc/fstab
 
-  - name: Initialize kubeadm
-    shell: kubeadm init
-    register: kubeinit
+#  - name: Initialize kubeadm
+#    shell: kubeadm init
+#    register: kubeinit
 
 
-  - name: Add kubeadm join
-    blockinfile:
-     path: /root/kube-init
-     create: yes
-     block: |
-       {{ kubeinit }}
+#  - name: Add kubeadm join
+#    blockinfile:
+#     path: /root/kube-init
+#     create: yes
+#     block: |
+#       {{ kubeinit.stdout }}
 
+  - name: Create kube join command
+    shell: cat /root/kube-init | grep -E 'kubeadm join|--discovery' > /root/kubeinit.sh && chmod 755 /root/kubeinit.sh
 
+  - name: Create .kube directory
+    file:
+     path: /root/.kube
+     state: directory
 
+  - name: Create kube config
+    shell: cat /etc/kubernetes/admin.conf > /root/.kube/config
 

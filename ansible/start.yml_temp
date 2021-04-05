@@ -1,0 +1,11 @@
+- name: kubernetes cluster build
+  hosts: sample
+  gather_facts: yes
+  become: yes
+  tasks:
+   - name: shell
+     shell: cat /root/sample
+     register: shell
+
+   - name: shell1
+     shell: echo "{{shell.stdout}}" | grep -E 'an|ar' > /root/qwer
