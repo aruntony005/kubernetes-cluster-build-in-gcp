@@ -1,12 +1,12 @@
 provider "google" {
- credentials = "${file("keybernetes-key.json")}"
+ credentials = "${file("kubernetes-key.json")}"
  project     = "prefab-breaker-276312"
  region      = "us-west1"
 }
 
 locals {
-  public_key = "${file("public_key")}"
-  private_key = "${file("private_key")}"
+  public_key = "${filebase64("public_key.gpg")}"
+  private_key = "${filebase64("private_key.gpg")}"
 }
 
 resource "google_compute_instance_template" "master" {
@@ -36,7 +36,7 @@ resource "google_compute_instance_template" "master" {
     role = "master",
     mig_name = "kube-cluster-mig"
     public_key = "${local.public_key}"
-    private_key = "4{local.private_key}"
+    private_key = "${local.private_key}"
   }
 
   metadata_startup_script = "${file("startup.sh")}"
