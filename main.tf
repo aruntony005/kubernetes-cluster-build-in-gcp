@@ -1,6 +1,6 @@
 provider "google" {
  credentials = "${file("kubernetes-key.json")}"
- project     = "prefab-breaker-276312"
+ project     = var.project_id
  region      = "us-west1"
 }
 
@@ -18,23 +18,23 @@ resource "google_compute_instance_template" "master" {
     role = "master"
   }
 
-  machine_type         = "n1-standard-2"
+  machine_type         = var.master_machine_type
 
   disk {
-    source_image      = "centos-cloud/centos-8"
+    source_image      = var.master_image
     auto_delete       = false
     boot              = true
   }
 
   network_interface {
-    network = "default"
+    network = var.vpc_network 
     access_config {
     }
   }
 
   metadata = {
     role = "master",
-    mig_name = "kube-cluster-mig"
+    mig_name = var.instance_group_name
     public_key = "${local.public_key}"
     private_key = "${local.private_key}"
   }
@@ -53,33 +53,36 @@ resource "google_compute_instance_template" "worker" {
     role = "worker"
   }
 
-  machine_type         = "n1-standard-2"
+  machine_type         = var.worker_machine_type
 
   disk {
-    source_image      = "centos-cloud/centos-8"
+    source_image      = var.worker_image
     auto_delete       = false
     boot              = true
   }
 
   network_interface {
-    network = "default"
+    network = var.vpc_network
     access_config {
     }
   }
 
+
   metadata = {
     role = "worker",
-    mig_name = "kube-cluster-mig"
+    mig_name = var.instance_group_name
+    public_key = "${local.public_key}"
+    private_key = "${local.private_key}"
   }
 
+  metadata_startup_script = "${file("startup.sh")}"
 }
 
 
 resource "google_compute_instance_group_manager" "appserver" {
-  name = "kube-cluster-mig"
-  base_instance_name = "kube"
-  zone               = "us-central1-a"
-//  wait_for_instances = "true"
+  name = var.instance_group_name
+  base_instance_name = var.base_instance_name 
+  zone               = var.zone
 
   version {
     name = "worker"
@@ -94,5 +97,5 @@ resource "google_compute_instance_group_manager" "appserver" {
     }
   }
 
-  target_size  = 2
+  target_size  = var.cluster_size
 }

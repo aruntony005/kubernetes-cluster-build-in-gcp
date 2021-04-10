@@ -8,9 +8,9 @@
        Metadata-Flavor: Google
     register: kuberole
 
-   - name: sample
-     set_fact:
-      host: "{{ groups }}"
+  - name: sample
+    set_fact:
+     host: "{{ groups.worker }}"
 
   - name: Edit sshd_config (remove the lines with certain keywords)
     lineinfile:
@@ -151,7 +151,7 @@
     when: (kuberole.content == "master")
 
   - name: Webserver setup
-    shell: sed -i 's/listen\ 80/Listen\ 8080/g' /etc/httpd/conf/httpd.conf && echo 'worker' >> /var/www/html/health && chmod 777 /var/www/html/health
+    shell: sed -i 's/Listen\ 80/Listen\ 8080/g' /etc/httpd/conf/httpd.conf && echo 'worker' >> /var/www/html/health && chmod 777 /var/www/html/health
     when: (kuberole.content == "worker")
 
   - name: Start services
@@ -163,14 +163,16 @@
 
   - name: Wait for 8080 port to be up in the worker nodes
     wait_for:
-      host: 10.128.15.212
+      host: "{{ item }}"
       port: 8080
       state: started
     when: (kuberole.content == "master")
+    with_items: "{{ host }}"
 
   - name: kube join
-    shell: ssh -o StrictHostKeyChecking=no 10.128.15.212 < /root/kubeinit.sh
+    shell: ssh -o StrictHostKeyChecking=no {{ item }} < /root/kubeinit.sh
     when: (kuberole.content == "master")
+    with_items: "{{ host }}"
 
   - name: Add cni objects
     shell: kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')"
