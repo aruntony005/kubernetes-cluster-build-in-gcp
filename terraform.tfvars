@@ -10,7 +10,7 @@ worker_image = "centos-cloud/centos-8"
 instance_group_name = "kube-cluster-mig"
 base_instance_name = "kube"
 
-zone = "us-central1-a"
+zone = "us-west1-a"
 
 cluster_size = 3
 
