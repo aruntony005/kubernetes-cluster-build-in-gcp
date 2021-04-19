@@ -16,7 +16,6 @@ sudo chmod 644 /root/.ssh/authorized_keys
 sudo echo -e "PermitRootLogin yes\nPubkeyAuthentication yes\nPasswordAuthentication yes" >> /etc/ssh/sshd_config  
 sudo systemctl restart sshd  
 gpg --quiet --batch --yes --decrypt --passphrase="aruntony" --output /root/kubernetes-cluster-build/kubernetes-key.json /root/kubernetes-cluster-build/kubernetes-key.json.gpg  
----
 The keys and secrets in this repos are encrypted using gpg.
 ```
 gpg --symmetric --cipher-algo AES256 file_name
