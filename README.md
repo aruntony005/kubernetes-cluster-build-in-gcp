@@ -1,7 +1,5 @@
 # kubernetes-cluster-build
-
 ## Preparation
-
 yum install epel-release -y  
 yum install git unzip wget ansible -y  
 git clone -b develop https://github.com/aruntony005/kubernetes-cluster-build.git  
