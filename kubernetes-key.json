@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "prefab-breaker-276312",
+  "private_key_id": "fbab916fb126e5d189ee01c729733b0a2f277a15",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDJSaq9rND12F1u\nyj5Jd0RaU3R754tQXg0kt8J64ybKopZEL/oAQJ/qNilFwsn9tJCTF9Zc4AC+YjWl\naA5lVcAX9sqk57A25xshQiHJoFknAQD8MNf/plnF8WjrvW+/c7CuJvbxy3j9A3+f\nqf43eodWJ+iOlSkhj+T9nLd3YvnlKd+N2y7MISgMxLJuRaXa1SsKDnCCGCgWe2/P\nbSy1LkD3hsXXC8FC55/8jiIKPK8qmoeL86dMxQZY/bFdfIfcs+9/cfXE2/nSZtkG\ntjCFPiUYGsZHlKIp6CLfd5c4KBgU1bbrp4T+saVuP5Y5phnPR1+xMmfhwRZxdxnO\nY0wsd57vAgMBAAECggEAAQXTzUTshuNDjkWOzXbCrSbRZ7PEfHMN5Are/RrcXpk2\n5D/OKGQrq9f8m7MirZxWQ7kSSMSGnHEJTr7Zm+A0qqqBWxcmSREhjSi13T1oVo9l\nvuJMpqrkt+HDI7eBstpWonvmM1JSWg7Dfj8x4HxJ5cEsKFVPsTD2++bo871YAbcT\ncHpehYtfyy85VEvwYxuwS39SDT4Sq1G2i8JFQrKXhcPbUqkqgk8ApilQexniPK+s\ntIbFzokZ8O0Go/r95iAGxy7C6LuIOOnjyMRr+fn/NmyKnz/w/Hhx1sbyjQr2Knkj\nlvrDbn6kv3I1WnSbowH7iZcJgHnH/Cf84tmBoKMVUQKBgQD0y8VUBJYcd+JHiWBE\nQVe2HxBWssufXtB3OjOcPJHxHyf7XVCRkc2h7d40P24t/ugGC0iPciLXSOg2PpJT\ngG6k6O5cXRtSApdkTTiEyt92dPg3y2Y50sx/sZ3J/K5DPdqbRr9eB6CyeYVp8DGF\niy7qrOuw1FT5aD2t9jh30T46RwKBgQDSgB5Pst3P9PeMUdrckPmv+Ft3733Nmu31\nJSAuF9vzUYtP1+nzXOmXr2NTuBNvDQOxx8vk4Nq0zsOOVcez4tzQMWQCWM6HLkhi\nias5pN1iNJ8PzHgHKKaL8g0Olcvt3/jA1pr1kMMd8CX0bNk3ilidUj+5u7cZPYV/\nMEYjbeWiGQKBgBb21rgfBgX9qRiU5pcAmj3XhCzd8QQuXNgSeaz6caZxCcsm4dwG\nFYhPTD0Shj+CXjnS7SenyWTwzffovslejwKhZ1r60QlMfO9H3zl13qi6KF7zkc9y\n2wRPoUHFloNwVgWjCWjExmp3w/BAPCUO/YO+XQ3lnWMYSFD9fCahVnkZAoGAP7fk\ndP+RwSdH38PPWkDQNAIbvfxSunARY8lvKkSyob6nSu3ytWYEl5PRnz/zMgRgf+oY\nwBmIWn7UFzvEDaG4cZThzwwOyECsTJebqwFKujVviJq+InydnXMRnL6fUkwfwk+z\n7G17go51Dr38KqHIHScOfyxhSlSjGlMEiCj1/9ECgYEA8F8QgCh7Y9Oqx1VkCQMK\niqUbsr52Pvxkn19kmxux9aYQMteyVscqy5qnY53kEPBBR98+J0p7npLKuZrvsJrd\nxOzZaV0yGu3Sj5Om7x3+m358pU2XQa05UAWZ6OnuQyVTkcxUqdk8Oxf38qg+wXa7\nuiisS030KYhGDsYnPAXnz/M=\n-----END PRIVATE KEY-----\n",
+  "client_email": "kubernetes@prefab-breaker-276312.iam.gserviceaccount.com",
+  "client_id": "102846878304709071268",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/kubernetes%40prefab-breaker-276312.iam.gserviceaccount.com"
+}
