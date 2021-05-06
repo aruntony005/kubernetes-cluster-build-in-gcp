@@ -5,7 +5,7 @@ Execute the below commands before using the scripts in the repo.
 ```
 yum install epel-release -y
 yum install git unzip wget ansible -y
-git clone -b develop https://github.com/aruntony005/kubernetes-cluster-build.git
+git clone -b develop https://github.com/aruntony005/kubernetes-cluster-build-in-gcp.git
 wget https://releases.hashicorp.com/terraform/0.14.9/terraform_0.14.9_linux_amd64.zip
 unzip terraform_0.14.9_linux_amd64.zip
 install terraform /usr/local/bin/
